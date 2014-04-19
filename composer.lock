@@ -1,0 +1,50 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "129c2073e2687d7d5fb730288544083d",
+    "packages": [
+        {
+            "name": "splitice/rage4-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/splitice/php-rage4-dns",
+                "reference": "68362a8f2ab592e65321bd088380ef5405619277"
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Splitice": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "keywords": [
+                "rage4"
+            ],
+            "time": "2014-03-10 09:50:43"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "splitice/rage4-api": 20
+    },
+    "platform": {
+        "php": ">=5.3"
+    },
+    "platform-dev": [
+
+    ]
+}

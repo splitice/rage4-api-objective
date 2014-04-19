@@ -1,0 +1,24 @@
+{
+	"keywords" : [
+		"rage4",
+		"api"
+	],
+	"autoload" : {
+		"psr-0" : {
+			"Splitice" : "src"
+		}
+	},
+	"name" : "splitice/rage4-api-objective",
+	"type" : "library",
+	"description" : "An objective API to Rage4",
+	"require" : {
+		"php" : ">=5.3",
+		"splitice/rage4-api" : "dev-master"
+	},
+	"minimum-stability" : "dev",
+	"repositories" : [{
+			"type" : "git",
+			"url" : "https://github.com/splitice/php-rage4-dns"
+		}
+	]
+}
