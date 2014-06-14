@@ -1,10 +1,9 @@
 <?php
 namespace SplitIce\Rage4;
 
-use Splitice\Rage4\API;
 class GeoRegions {
 	private static $cache = null;
-	static function RegionList(API $api, $cache = true) {
+	static function RegionList(Rage4Api $api, $cache = true) {
 		if ($cache && self::$cache) {
 			return self::$cache;
 		}
