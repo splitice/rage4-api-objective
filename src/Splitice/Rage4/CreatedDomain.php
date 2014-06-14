@@ -70,7 +70,7 @@ class CreatedDomain extends Domain
         return $this;
     }
 
-    function RefreshRecords(Rage4Api $api)
+    function refresh_records(Rage4Api $api)
     {
         $this->records = $this->get_records($api);
     }
@@ -130,7 +130,7 @@ class CreatedDomain extends Domain
             $records = $this->records;
 
             //$this->records: what we have
-            $this->RefreshRecords($api);
+            $this->refresh_records($api);
 
             foreach ($this->records as $z1) {
                 //TODO: logic behind this, and support for additional NS records
