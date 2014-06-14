@@ -1,5 +1,5 @@
 <?php
-use SplitIce\Rage4\Domain;
+use Splitice\Rage4\Domain;
 use Splitice\Rage4\Rage4Api;
 
 /**

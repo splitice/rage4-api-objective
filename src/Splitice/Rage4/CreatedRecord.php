@@ -1,5 +1,5 @@
 <?php
-namespace SplitIce\Rage4;
+namespace Splitice\Rage4;
 
 class CreatedRecord extends Record
 {
