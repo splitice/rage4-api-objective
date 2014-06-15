@@ -8,12 +8,24 @@ namespace Splitice\Rage4;
  */
 class CreatedDomain extends Domain
 {
+    /**
+     * @var int
+     */
     public $subnet_mask;
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
+    /**
+     * @param string $name
+     * @param int $type
+     * @param string $email
+     * @param int $id
+     * @param array $records
+     * @param int $subnet_mask
+     * @param string|null $nsdomain
+     */
     function __construct($name, $type, $email, $id, $records = array(), $subnet_mask = 0, $nsdomain = null)
     {
         $this->id = $id;
@@ -91,7 +103,7 @@ class CreatedDomain extends Domain
             if ($record instanceof CreatedRecord) {
                 $record2 = $record->get($api, $this, true);
                 if ($record2) {
-                    if ($record2->content != $record->content || $record2->ttl != $record->ttl) {
+                    if (!$record->equals($record2)) {
                         $record->update($api);
                     }
                 }
@@ -106,7 +118,8 @@ class CreatedDomain extends Domain
                         }
                     }
                     if ($record2) {
-                        if ($record2->ttl != $record->ttl || $record2->geo != $record->geo || ($record2->geolat != $record->geolat && $record->geolat !== null) || ($record2->geolong != $record->geolong && $record->geolong !== null)) {
+                        if (!$record->equals($record2)) {
+                            //Update record values
                             $record2->content = $record->content;
                             $record2->ttl = $record->ttl;
                             $record2->geo = $record->geo;

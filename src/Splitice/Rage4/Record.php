@@ -101,4 +101,14 @@ class Record
         }
         return null;
     }
+
+    /**
+     * Compare two Record instances
+     *
+     * @param Record $record
+     * @return bool
+     */
+    function equals(Record $record){
+        return $this->ttl == $record->ttl && $this->geo == $record->geo && ($this->geolat == $record->geolat || !$record->geo) && ($this->geolong == $record->geolong || !$record->geo);
+    }
 }

@@ -13,6 +13,15 @@ class CreatedRecord extends Record
         $this->domain = $domain;
     }
 
+    /**
+     * Get Created record from Rage4.com (overload)
+     * TODO: remove / refactor
+     *
+     * @param Rage4Api $api
+     * @param CreatedDomain $domain
+     * @param bool $single
+     * @return array|null|CreatedRecord|CreatedRecord[]|Record
+     */
     function get(Rage4Api $api, CreatedDomain $domain = null, $single = false)
     {
         if ($domain === null)
@@ -30,6 +39,12 @@ class CreatedRecord extends Record
         return null;
     }
 
+    /**
+     * Update record at Rage4.com
+     *
+     * @param Rage4Api $api
+     * @param Record|null $record
+     */
     function update(Rage4Api $api, Record $record = null)
     {
         if ($record) {
@@ -43,6 +58,11 @@ class CreatedRecord extends Record
         $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 
+    /**
+     * Delete record at Rage4.com
+     *
+     * @param Rage4Api $api
+     */
     function delete(Rage4Api $api)
     {
         $api->deleteRecord($this->id);

@@ -38,6 +38,13 @@ class Domain
      */
     public $nsdomain;
 
+    /**
+     * @param string $name
+     * @param int $type
+     * @param string $email
+     * @param array $records
+     * @param string|null $nsdomain
+     */
     function __construct($name, $type, $email, array $records = array(), $nsdomain = null)
     {
         $this->name = $name;
