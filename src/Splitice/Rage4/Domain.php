@@ -3,16 +3,39 @@ namespace Splitice\Rage4;
 
 class Domain
 {
+    /**
+     * Enum value for a regular domain
+     */
     const TYPE_DOMAIN = 0;
+
+    /**
+     * Enum value for a IPv4 Reverse domain
+     */
     const TYPE_IPv4 = 1;
 
+    /**
+     * @var string
+     */
     public $name;
-    public $email = 'x4borg@gmail.com';
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var integer
+     */
     public $type;
+
     /**
      * @var Record[]|CreatedRecord[]
      */
     public $records = array();
+
+    /**
+     * @var string|null
+     */
     public $nsdomain;
 
     function __construct($name, $type, $email, array $records = array(), $nsdomain = null)
@@ -24,6 +47,12 @@ class Domain
         $this->nsdomain = $nsdomain;
     }
 
+    /**
+     * Create the domain at Rage4.com
+     *
+     * @param Rage4Api $api
+     * @return CreatedDomain|string
+     */
     function create(Rage4Api $api)
     {
         $ret = $api->createDomain($this->name, $this->email, $this->nsdomain);
@@ -34,6 +63,12 @@ class Domain
         return new CreatedDomain($this->name, $this->type, $this->email, $id, array(), null, $this->nsdomain);
     }
 
+    /**
+     * Get a created domain instance from Rage4
+     *
+     * @param Rage4Api $api
+     * @return null|CreatedDomain
+     */
     function get(Rage4Api $api)
     {
         $domain = self::fromName($api, $this->name);
@@ -42,6 +77,8 @@ class Domain
     }
 
     /**
+     * Get all domains from Rage4
+     *
      * @param Rage4Api $api
      * @return CreatedDomain[]
      * @throws \Splitice\Rage4\Rage4Exception
@@ -60,8 +97,10 @@ class Domain
     }
 
     /**
+     * Get a domain by name from Rage4
+     *
      * @param Rage4Api $api
-     * @param $name
+     * @param string $name
      * @return null|CreatedDomain
      * @throws \Splitice\Rage4\Rage4Exception
      */
@@ -79,6 +118,31 @@ class Domain
         return new CreatedDomain($ret['name'], $ret['type'], $ret['owner_email'], $ret['id']);
     }
 
+    /**
+     * Get a domain by id from Rage4
+     *
+     * @param Rage4Api $api
+     * @param integer $id
+     * @return null|CreatedDomain
+     * @throws Rage4Exception
+     */
+    static function fromId(Rage4Api $api, $id)
+    {
+        $ret = $api->getDomain($id);
+
+        if (is_string($ret)) {
+            throw new Rage4Exception($ret);
+        }
+        if (!$ret)
+            return null;
+        return new CreatedDomain($ret['name'], $ret['type'], $ret['owner_email'], $ret['id']);
+    }
+
+    /**
+     * @param Rage4Api $api
+     * @param $doDelete
+     * @return null|CreatedDomain
+     */
     function sync(Rage4Api $api, $doDelete)
     {
         $rDomain = self::fromName($api, $this->name);
@@ -89,7 +153,10 @@ class Domain
         } else {
             $rDomain = $this->create($api);
         }
+
+        //Call sync on the created domain
         $rDomain->sync($api, $doDelete);
+
         return $rDomain;
     }
 }

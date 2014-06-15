@@ -16,7 +16,7 @@ class CreatedRecord extends Record
     function get(Rage4Api $api, CreatedDomain $domain = null, $single = false)
     {
         if ($domain === null)
-            throw new \Exception('TODO');
+            $domain = CreatedDomain::fromId($api, $this->domain);
 
         foreach ($domain->get_records($api, true) as $record) {
             if ($record->id == $this->id) {

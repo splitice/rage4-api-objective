@@ -21,6 +21,11 @@ class CreatedDomain extends Domain
         parent::__construct($name, $type, $email, $records, $nsdomain);
     }
 
+    /**
+     * Delete domain at Rage4.com
+     *
+     * @param Rage4Api $api
+     */
     function delete(Rage4Api $api)
     {
         $api->deleteDomain($this->id);
