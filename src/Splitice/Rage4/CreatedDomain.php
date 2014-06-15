@@ -82,22 +82,27 @@ class CreatedDomain extends Domain
         return null;
     }
 
+    /**
+     * Overload of Record::get() returning $this
+     *
+     * @return CreatedDomain
+     */
     function get()
     {
         return $this;
     }
 
+    /**
+     * Refresh the cached records
+     *
+     * @param Rage4Api $api
+     */
     function refresh_records(Rage4Api $api)
     {
         $this->records = $this->get_records($api);
     }
 
     function sync(Rage4Api $api, $doDelete = true)
-    {
-        $this->sync_zones($api, $doDelete);
-    }
-
-    function sync_zones(Rage4Api $api, $doDelete = true)
     {
         foreach ($this->records as $k => $record) {
             if ($record instanceof CreatedRecord) {

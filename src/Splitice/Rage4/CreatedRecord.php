@@ -43,10 +43,11 @@ class CreatedRecord extends Record
      * Update record at Rage4.com
      *
      * @param Rage4Api $api
-     * @param Record|null $record
+     * @param Record|null $record optionally, a record to template this record off.
      */
     function update(Rage4Api $api, Record $record = null)
     {
+        //Set the value of this object to record, if we are updating with a record template
         if ($record) {
             foreach (get_object_vars($this) as $k => $v) {
                 if ($k != 'id' && $k != 'domain')
@@ -55,6 +56,8 @@ class CreatedRecord extends Record
             foreach (get_object_vars($record) as $k => $v)
                 $this->$k = $v;
         }
+
+        //Perform API update call
         $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 

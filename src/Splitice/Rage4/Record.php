@@ -54,34 +54,69 @@ class Record
         return $found;
     }
 
+    /**
+     * Given ID instantiate a CreatedRecord instance from this record
+     *
+     * @param int $id Rage4 record id
+     * @return CreatedRecord
+     */
     private function _created($id)
     {
         return new CreatedRecord($id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 
+    /**
+     * @param CreatedDomain $domain
+     * @param Rage4Api $api
+     * @return CreatedRecord
+     * @throws Rage4Exception
+     */
     function create(CreatedDomain $domain, Rage4Api $api)
     {
         $ret = $api->createRecord($domain->id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
         $id = null;
-        if (is_array($ret)) {
-            $id = $ret['id'];
-            return $this->_created($id);
+        if (is_string($ret)){
+            throw new Rage4Exception("Failed to create domain: ".$this->name.' error: '.$ret);
         }
-        return null;
+        if (!is_array($ret)) {
+            throw new Rage4Exception("Failed to create domain: ".$this->name);
+        }
+        $id = $ret['id'];
+        return $this->_created($id);
     }
 
+    /**
+     * Update a rage4 record
+     *
+     * @param int $id ID of the Rage4 record to update
+     * @param Rage4Api $api
+     */
     function update($id, Rage4Api $api)
     {
         $this->_created($id)->update($api);
     }
 
+    /**
+     * Create a record instance from Rage4 record data returned.
+     *
+     * @param $a Rage4 structured record data
+     * @return CreatedRecord
+     */
     static function fromRage4($a)
     {
         return new CreatedRecord($a['id'], $a['name'], $a['content'], $a['type'], $a['priority'], $a['failover_enabled'], $a['failover_content'],
             $a['ttl'], $a['domain_id'], $a['geo_region_id'], $a['geo_lat'], $a['geo_long']);
     }
 
-
+    /**
+     * Get a record given a name and a Domain instance.
+     *
+     * @param Rage4Api $api
+     * @param string $name
+     * @param Domain $domain
+     * @param int|null $type
+     * @return null|CreatedRecord
+     */
     static function fromName(Rage4Api $api, $name, Domain $domain, $type = null)
     {
         return $domain->get($api)->get_record($api, $name, $type);
