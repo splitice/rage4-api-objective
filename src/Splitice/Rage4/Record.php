@@ -56,12 +56,12 @@ class Record
 
     private function _created($id)
     {
-        return new CreatedRecord($id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong, $this->geolock);
+        return new CreatedRecord($id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 
     function create(CreatedDomain $domain, Rage4Api $api)
     {
-        $ret = $api->createRecord($domain->id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong, $this->geolock);
+        $ret = $api->createRecord($domain->id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
         $id = null;
         if (is_array($ret)) {
             $id = $ret['id'];
@@ -77,9 +77,8 @@ class Record
 
     static function fromRage4($a)
     {
-        $locked = isset($a['geo_lock']) && $a['geo_lock'];
         return new CreatedRecord($a['id'], $a['name'], $a['content'], $a['type'], $a['priority'], $a['failover_enabled'], $a['failover_content'],
-            $a['ttl'], $a['domain_id'], $a['geo_region_id'], $locked ? $a['geo_lat'] : null, $locked ? $a['geo_long'] : null);
+            $a['ttl'], $a['domain_id'], $a['geo_region_id'], $a['geo_lat'], $a['geo_long']);
     }
 
 

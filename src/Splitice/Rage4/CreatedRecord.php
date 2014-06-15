@@ -40,7 +40,7 @@ class CreatedRecord extends Record
             foreach (get_object_vars($record) as $k => $v)
                 $this->$k = $v;
         }
-        $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong, $this->geolock);
+        $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 
     function delete(Rage4Api $api)

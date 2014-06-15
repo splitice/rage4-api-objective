@@ -101,15 +101,12 @@ class CreatedDomain extends Domain
                         }
                     }
                     if ($record2) {
-                        if ($record2->ttl != $record->ttl || $record2->geo != $record->geo || $record2->geolat != $record->geolat || ($record2->geolat !== $record->geolat && ($record2->geolat === null || $record->geolat === null))
-                            || $record2->geolong !== $record->geolong || ($record2->geolong !== $record->geolong && ($record2->geolong === null || $record->geolong === null)) || $record->geolock != $record2->geolock) {
-
+                        if ($record2->ttl != $record->ttl || $record2->geo != $record->geo || ($record2->geolat != $record->geolat && $record->geolat !== null) || ($record2->geolong != $record->geolong && $record->geolong !== null)) {
                             $record2->content = $record->content;
                             $record2->ttl = $record->ttl;
                             $record2->geo = $record->geo;
                             $record2->geolat = $record->geolat;
                             $record2->geolong = $record->geolong;
-                            $record2->geolock = $record->geolock;
 
                             $record2->update($api);
                         }
