@@ -117,7 +117,7 @@ class CreatedDomain extends Domain
                 if ($records2) {
                     $record2 = null;
                     foreach ($records2 as $r) {
-                        if ($r->content == $record->content) {
+                        if ($r->content == $record->content && $r->type == $record->type) {
                             $record2 = $r;
                             break;
                         }

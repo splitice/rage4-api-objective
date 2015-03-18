@@ -58,7 +58,7 @@ class CreatedRecord extends Record
         }
 
         //Perform API update call
-        $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
+        return $api->updateRecord($this->id, $this->name, $this->content, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
     }
 
     /**

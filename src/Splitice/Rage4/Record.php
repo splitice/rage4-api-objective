@@ -25,8 +25,10 @@ class Record
         $this->failovercontent = $failovercontent;
         $this->ttl = $ttl;
         $this->geo = $geo;
-        $this->geolat = $geolat;
-        $this->geolong = $geolong;
+        if($geo) {
+            $this->geolat = $geolat;
+            $this->geolong = $geolong;
+        }
         $this->geolock = $geolock;
     }
 
@@ -144,6 +146,7 @@ class Record
      * @return bool
      */
     function equals(Record $record){
-        return $this->ttl == $record->ttl && $this->geo == $record->geo && ($this->geolat == $record->geolat || !$record->geo) && ($this->geolong == $record->geolong || !$record->geo);
+        return $this->name == $record->name && $this->content == $record->content && $this->type == $record->type && $this->priority == $record->priority && $this->failover == $record->failover &&  $this->failovercontent == $record->failovercontent &&
+        $this->ttl == $record->ttl && $this->geo == $record->geo && ($this->geolat == $record->geolat || !$record->geo) && ($this->geolong == $record->geolong || !$record->geo);
     }
 }
