@@ -21,7 +21,7 @@ class SimpleDomainTest extends PHPUnit_Framework_TestCase {
 
         //Assert
         $client = $this->getMock(self::API_CLIENT);
-        $client->expects($this->once())->method('executeApi')->with($this->equalTo('createregulardomainext'),$this->equalTo(array('name'=>$name,'email'=>$email,'ns'=>$ns)));
+        $client->expects($this->once())->method('executeApi')->with($this->equalTo('createregulardomain'),$this->equalTo(array('name'=>$name,'email'=>$email,'ns'=>$ns)));
 
         //Do
         $api = new Rage4Api($client);
