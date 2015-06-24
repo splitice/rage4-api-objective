@@ -15,15 +15,18 @@ class SimpleSync implements IDomainSync {
     }
 
     protected function r4_delete_record(CreatedRecord $record){
+        //echo "Deleting ", $record->name, ":",$record->content,"\r\n";
         return $record->delete($this->api);
     }
 
     protected function r4_update_record(CreatedRecord $record){
+        //echo "Updating ", $record->name, "\r\n";
         return $record->update($this->api);
     }
 
     protected function r4_add_record(CreatedDomain $domain, Record $record){
-        return $domain->add_record($domain, $record, $this->api);
+        //echo "Adding ", $record->name, "\r\n";
+        return $domain->add_record($record, $this->api);
     }
 
     protected function r4_refresh_records(CreatedDomain $domain)
