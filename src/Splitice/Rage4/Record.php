@@ -3,10 +3,12 @@ namespace Splitice\Rage4;
 
 class Record
 {
+    const DEFAULT_PRIORITY = 1;
+
     public $name;
     public $content;
     public $type;
-    public $priority = null;
+    public $priority = self::DEFAULT_PRIORITY;
     public $failover = null;
     public $failovercontent = null;
     public $ttl = 3600;
@@ -15,12 +17,12 @@ class Record
     public $geolong = null;
     public $geolock;
 
-    public function __construct($name, $content, $type, $priority = null, $failover = null, $failovercontent = null, $ttl = 3600, $geo = 0, $geolat = null, $geolong = null, $geolock = false)
+    public function __construct($name, $content, $type, $priority = self::DEFAULT_PRIORITY, $failover = null, $failovercontent = null, $ttl = 3600, $geo = 0, $geolat = null, $geolong = null, $geolock = false)
     {
         $this->name = $name;
         $this->content = (string)$content;
         $this->type = $type;
-        $this->priority = $priority;
+        $this->priority = $priority === null ? 1 : $priority;
         $this->failover = $failover;
         $this->failovercontent = $failovercontent;
         $this->ttl = $ttl;
