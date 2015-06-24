@@ -1,6 +1,6 @@
 <?php
 namespace Splitice\Rage4;
-use Splitice\Rage4\Sync\DefaultSync;
+use Splitice\Rage4\Sync\SimpleSync;
 use Splitice\Rage4\Sync\IDomainSync;
 
 /**
@@ -87,9 +87,10 @@ class CreatedDomain extends Domain
     /**
      * Overload of Record::get() returning $this
      *
+     * @param Rage4Api $api
      * @return CreatedDomain
      */
-    function get()
+    function get(Rage4Api $api)
     {
         return $this;
     }
@@ -107,16 +108,13 @@ class CreatedDomain extends Domain
     /**
      * Syncronise two domains
      *
-     * @param Rage4Api $api
+     * @param IDomainSync $sync
      * @param bool $doDelete
-     * @throws \Exception
+     * @return null|CreatedDomain|void
      */
-    function sync(Rage4Api $api, $doDelete = true, IDomainSync $sync = null)
+    function sync(IDomainSync $sync, $doDelete = true)
     {
-        if($sync === null) {
-            $sync = new DefaultSync();
-        }
-        $sync->sync_domain($this,$api,$doDelete);
+        $sync->sync_domain($this,$doDelete);
     }
 
     function add_record(Record $record, Rage4Api $api)

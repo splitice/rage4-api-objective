@@ -68,6 +68,16 @@ class Record
     }
 
     /**
+     * Make into a created record object given an ID manually.
+     *
+     * @param $id
+     * @return CreatedRecord
+     */
+    function upgradeWithId($id){
+        return $this->_created($id);
+    }
+
+    /**
      * @param CreatedDomain $domain
      * @param Rage4Api $api
      * @return CreatedRecord
@@ -78,24 +88,13 @@ class Record
         $ret = $api->createRecord($domain->id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
         $id = null;
         if (is_string($ret)){
-            throw new Rage4Exception("Failed to create domain: ".$this->name.' error: '.$ret);
+            throw new Rage4Exception("Failed to create record: ".$this->name.' error: '.$ret);
         }
         if (!is_array($ret)) {
-            throw new Rage4Exception("Failed to create domain: ".$this->name);
+            throw new Rage4Exception("Failed to create record: ".$this->name);
         }
         $id = $ret['id'];
         return $this->_created($id);
-    }
-
-    /**
-     * Update a rage4 record
-     *
-     * @param int $id ID of the Rage4 record to update
-     * @param Rage4Api $api
-     */
-    function update($id, Rage4Api $api)
-    {
-        $this->_created($id)->update($api);
     }
 
     /**

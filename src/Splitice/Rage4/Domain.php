@@ -1,6 +1,8 @@
 <?php
 namespace Splitice\Rage4;
 
+use Splitice\Rage4\Sync\IDomainSync;
+
 class Domain
 {
     /**
@@ -143,27 +145,5 @@ class Domain
         if (!$ret)
             return null;
         return new CreatedDomain($ret['name'], $ret['type'], $ret['owner_email'], $ret['id']);
-    }
-
-    /**
-     * @param Rage4Api $api
-     * @param $doDelete
-     * @return null|CreatedDomain
-     */
-    function sync(Rage4Api $api, $doDelete)
-    {
-        $rDomain = self::fromName($api, $this->name);
-        if ($rDomain) {
-            $rDomain->name = $this->name;
-            $rDomain->email = $this->email;
-            $rDomain->records = $this->records;
-        } else {
-            $rDomain = $this->create($api);
-        }
-
-        //Call sync on the created domain
-        $rDomain->sync($api, $doDelete);
-
-        return $rDomain;
     }
 }

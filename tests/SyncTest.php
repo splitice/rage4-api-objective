@@ -15,17 +15,19 @@ class SyncTest extends PHPUnit_Framework_TestCase {
         $ns = "ns";
         $type = Domain::TYPE_DOMAIN;
 
+        //What we are wanting
         $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
         $cd->records[] = new Record($name,"1.1.1.1",'A');
+
+        //What we have
         $records = array();
-
-
-        $client = $this->getMock(Rage4Api::class);
-        $client->expects($this->once())->method('createRecord')->with($this->equalTo(1),$this->equalTo($name),$this->equalTo("1.1.1.1"),'A');
 
         $sync = new MockedSync($records);
 
-        $cd->sync($client, true, $sync);
+        $cd->sync($sync,true);
+
+        $this->assertEquals(1, count($sync->actions));
+        $this->assertEquals('add', $sync->actions[0][0]);
     }
 
     function testSimpleNoopSync(){
@@ -35,20 +37,146 @@ class SyncTest extends PHPUnit_Framework_TestCase {
         $ns = "ns";
         $type = Domain::TYPE_DOMAIN;
 
+        //What we are wanting
         $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
         $cd->records[] = new Record($name,"1.1.1.1",'A');
 
-
-        $client = $this->getMock(Rage4Api::class);
-        $client->expects($this->never())->method('createRecord');
-        $client->expects($this->never())->method('deleteRecord')
-        $client->expects($this->never())->method('updateRecord');
-
+        //What we have
         $records = array();
         $records[] = new CreatedRecord(1, $name, "1.1.1.1", 'A');
 
         $sync = new MockedSync($records);
 
-        $cd->sync($client, true, $sync);
+        $cd->sync($sync,true);
+
+        $this->assertEquals(0, count($sync->actions));
+    }
+
+    function testSimpleDeleteSync(){
+        //Setup
+        $name = "test.com";
+        $email = "email@test.com";
+        $ns = "ns";
+        $type = Domain::TYPE_DOMAIN;
+
+        //What we are wanting
+        $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
+
+        //What we have
+        $records = array();
+        $records[] = new CreatedRecord(1, $name, "1.1.1.1", 'A');
+
+        $sync = new MockedSync($records);
+
+        $cd->sync($sync,true);
+
+        $this->assertEquals(1, count($sync->actions));
+        $this->assertEquals('delete', $sync->actions[0][0]);
+    }
+
+    function testSimpleUpdateSync(){
+        //Setup
+        $name = "test.com";
+        $email = "email@test.com";
+        $ns = "ns";
+        $type = Domain::TYPE_DOMAIN;
+
+        //What we are wanting
+        $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
+        $cd->records[] = new Record($name, "1.1.1.2", 'A');
+
+        //What we have
+        $records = array();
+        $records[] = new CreatedRecord(1, $name, "1.1.1.1", 'A');
+
+        $sync = new MockedSync($records);
+
+        $cd->sync($sync,true);
+
+        $this->assertEquals(2, count($sync->actions));
+        $this->assertEquals('add', $sync->actions[0][0]);
+        $this->assertEquals('1.1.1.2', $sync->actions[0][1]->content);
+        $this->assertEquals('delete', $sync->actions[1][0]);
+        $this->assertEquals('1.1.1.1', $sync->actions[1][1]->content);
+    }
+
+    function testSimpleAddWithPersistSync(){
+        //Setup
+        $name = "test.com";
+        $email = "email@test.com";
+        $ns = "ns";
+        $type = Domain::TYPE_DOMAIN;
+
+        //What we are wanting
+        $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
+        $cd->records[] = new Record($name, "1.1.1.2", 'A');
+        $cd->records[] = new Record($name, "mailA.com", 'MX');
+
+        //What we have
+        $records = array();
+        $records[] = new CreatedRecord(2, $name, "mailA.com", 'MX');
+
+        $sync = new MockedSync($records);
+
+        $cd->sync($sync,true);
+
+        $this->assertEquals(1, count($sync->actions));
+        $this->assertEquals('add', $sync->actions[0][0]);
+        $this->assertEquals('1.1.1.2', $sync->actions[0][1]->content);
+    }
+
+
+    function testSimpleUpdateWithPersistSync(){
+        //Setup
+        $name = "test.com";
+        $email = "email@test.com";
+        $ns = "ns";
+        $type = Domain::TYPE_DOMAIN;
+
+        //What we are wanting
+        $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
+        $cd->records[] = new Record($name, "1.1.1.2", 'A');
+        $cd->records[] = new Record($name, "mailA.com", 'MX');
+
+        //What we have
+        $records = array();
+        $records[] = new CreatedRecord(1, $name, "1.1.1.1", 'A');
+        $records[] = new CreatedRecord(2, $name, "mailA.com", 'MX');
+
+        $sync = new MockedSync($records);
+
+        $cd->sync($sync,true);
+
+        $this->assertEquals(2, count($sync->actions));
+        $this->assertEquals('add', $sync->actions[0][0]);
+        $this->assertEquals('1.1.1.2', $sync->actions[0][1]->content);
+        $this->assertEquals('delete', $sync->actions[1][0]);
+        $this->assertEquals('1.1.1.1', $sync->actions[1][1]->content);
+    }
+
+
+    function testSimpleDeleteWithPersistSync(){
+        //Setup
+        $name = "test.com";
+        $email = "email@test.com";
+        $ns = "ns";
+        $type = Domain::TYPE_DOMAIN;
+
+        //What we are wanting
+        $cd = new CreatedDomain($name, $type, $email, 1, array(), $ns);
+        $cd->records[] = new Record($name, "mailA.com", 'MX');
+
+        //What we have
+        $records = array();
+        $records[] = new CreatedRecord(1, $name, "1.1.1.1", 'A');
+        $records[] = new CreatedRecord(2, $name, "mailA.com", 'MX');
+
+        $sync = new MockedSync($records);
+
+        $cd->sync($sync,true);
+
+        $this->assertEquals(1, count($sync->actions));
+        $this->assertEquals('delete', $sync->actions[0][0]);
+        $this->assertEquals('1.1.1.1', $sync->actions[0][1]->content);
     }
 } 

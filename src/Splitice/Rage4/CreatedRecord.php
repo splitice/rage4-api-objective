@@ -44,6 +44,7 @@ class CreatedRecord extends Record
      *
      * @param Rage4Api $api
      * @param Record|null $record optionally, a record to template this record off.
+     * @return string|void
      */
     function update(Rage4Api $api, Record $record = null)
     {
