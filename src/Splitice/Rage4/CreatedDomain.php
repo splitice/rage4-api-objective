@@ -1,5 +1,7 @@
 <?php
 namespace Splitice\Rage4;
+use Splitice\Rage4\Sync\DefaultSync;
+use Splitice\Rage4\Sync\IDomainSync;
 
 /**
  * Class CreatedDomain
@@ -102,74 +104,19 @@ class CreatedDomain extends Domain
         $this->records = $this->get_records($api);
     }
 
-    function sync(Rage4Api $api, $doDelete = true)
+    /**
+     * Syncronise two domains
+     *
+     * @param Rage4Api $api
+     * @param bool $doDelete
+     * @throws \Exception
+     */
+    function sync(Rage4Api $api, $doDelete = true, IDomainSync $sync = null)
     {
-        foreach ($this->records as $k => $record) {
-            if ($record instanceof CreatedRecord) {
-                $record2 = $record->get($api, $this, true);
-                if ($record2) {
-                    if (!$record->equals($record2)) {
-                        $record->update($api);
-                    }
-                }
-            } else if ($record instanceof Record) {
-                $records2 = $record->get($api, $this);
-                if ($records2) {
-                    $record2 = null;
-                    foreach ($records2 as $r) {
-                        if ($r->content == $record->content && $r->type == $record->type) {
-                            $record2 = $r;
-                            break;
-                        }
-                    }
-                    if ($record2) {
-                        if (!$record->equals($record2)) {
-                            //Update record values
-                            $record2->content = $record->content;
-                            $record2->ttl = $record->ttl;
-                            $record2->geo = $record->geo;
-                            $record2->geolat = $record->geolat;
-                            $record2->geolong = $record->geolong;
-
-                            $record2->update($api);
-                        }
-
-                        $this->records[$k] = $record2;
-                    } else {
-                        $this->records[$k] = $this->add_record($record, $api);
-                    }
-                } else {
-                    $this->records[$k] = $this->add_record($record, $api);
-                }
-            }
+        if($sync === null) {
+            $sync = new DefaultSync();
         }
-
-        //DELETE if
-        if ($doDelete) {
-            //$records: what we want
-            $records = $this->records;
-
-            //$this->records: what we have
-            $this->refresh_records($api);
-
-            foreach ($this->records as $z1) {
-                //TODO: logic behind this, and support for additional NS records
-                if ($z1->type == 'SOA' && $z1->type == 'NS') {
-                    continue;
-                }
-
-                $found = false;
-                foreach ($records as $z2) {
-                    if ($z2->id == $z1->id) {
-                        $found = true;
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $z1->delete($api);
-                }
-            }
-        }
+        $sync->sync_domain($this,$api,$doDelete);
     }
 
     function add_record(Record $record, Rage4Api $api)
