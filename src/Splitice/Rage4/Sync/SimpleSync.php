@@ -9,23 +9,36 @@ use Splitice\Rage4\Record;
 
 class SimpleSync implements IDomainSync {
     private $api;
+    private $transactional = false;
 
-    function __construct(Rage4Api $api){
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    function __construct(Rage4Api $api, LoggerInterface $logger = null){
         $this->api = $api;
+        $this->logger = $logger;
     }
 
     protected function r4_delete_record(CreatedRecord $record){
-        //echo "Deleting ", $record->name, ":",$record->content,"\r\n";
+        if($this->logger) {
+            $this->logger->info("Deleting ". $record->name. ":". $record->content);
+        }
         return $record->delete($this->api);
     }
 
     protected function r4_update_record(CreatedRecord $record){
-        //echo "Updating ", $record->name, "\r\n";
+        if($this->logger) {
+            $this->logger->info("Updating " . $record->name);
+        }
         return $record->update($this->api);
     }
 
     protected function r4_add_record(CreatedDomain $domain, Record $record){
-        //echo "Adding ", $record->name, "\r\n";
+        if($this->logger) {
+            $this->logger->info("Adding ". $record->name);
+        }
         return $domain->add_record($record, $this->api);
     }
 
@@ -55,17 +68,19 @@ class SimpleSync implements IDomainSync {
 
         foreach ($this->get_records($domain) as $z1) {
             //TODO: logic behind this, and support for additional NS records
-            if ($z1->type == 'SOA' && $z1->type == 'NS') {
+            if ($z1->type == 'SOA' || $z1->type == 'NS') {
                 continue;
             }
 
             $found = false;
             foreach ($records as $z2) {
-                if($z1 instanceof CreatedRecord) {
+                if($z1 instanceof CreatedRecord && $z1 instanceof CreatedRecord) {
                     if ($z2->id == $z1->id) {
                         $found = true;
                         break;
                     }
+                }elseif($this->transactional && $record instanceof Record){
+
                 }else{
                     throw new \RuntimeException("There was a problem syncing deletes, all records should be created at this point.");
                 }
