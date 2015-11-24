@@ -5,7 +5,6 @@ use Splitice\Rage4\Sync\IDomainSync;
 
 /**
  * Class CreatedDomain
- * @package X4B\Rage4
  * @property CreatedRecord[] $records
  */
 class CreatedDomain extends Domain
@@ -68,20 +67,41 @@ class CreatedDomain extends Domain
         return $records;
     }
 
+    private static function _match($pattern, $value){
+        if(empty($pattern)){
+            return $value == $pattern;
+        }
+
+        $last = strlen($pattern) - 1;
+        if($last != 0 && $pattern[0] == '`'){
+            return preg_match($pattern, $value);
+        }
+
+        return $pattern == $value;
+    }
+
     /**
      * @param Rage4Api $api
      * @param $name
-     * @param null $type
+     * @param null $type will be interpreted as a regular expression if valid & start with "`"
+     * @param bool $array
      * @param bool $cache
-     * @return CreatedRecord|null
+     * @return CreatedRecord|null|CreatedRecord[]
      */
-    function get_record(Rage4Api $api, $name, $type = null, $cache = false)
+    function get_record(Rage4Api $api, $name, $type = null, $array = false, $cache = false)
     {
+        $ret = $array ? [] : null;
         $records = $this->get_records($api, $cache);
-        foreach ($records as $r)
-            if ($r->name == $name && ($type === null || $type == $r->type))
-                return $r;
-        return null;
+        foreach ($records as $r) {
+            if ($r->name == $name && ($type === null || self::_match($type,$r->type))) {
+                if($array) {
+                    $ret[] = $r;
+                }else{
+                    return $r;
+                }
+            }
+        }
+        return $ret;
     }
 
     /**

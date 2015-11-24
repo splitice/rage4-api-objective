@@ -2,7 +2,6 @@
 use Splitice\Rage4\CreatedDomain;
 use Splitice\Rage4\CreatedRecord;
 use Splitice\Rage4\Domain;
-use Splitice\Rage4\Rage4Api;
 use Splitice\Rage4\Record;
 
 include_once __DIR__.'/Mocks/MockedSync.php';
