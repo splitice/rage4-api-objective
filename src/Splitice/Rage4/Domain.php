@@ -119,6 +119,9 @@ class Domain
         /*if(!is_array($ret)){
             throw new Rage4Exception($ret);
         }*/
+        if($ret == 'Unable to fetch the item or API access not allowed' || $ret == 'not found'){
+        	return null;
+		}
         if (is_string($ret)) {
             throw new Rage4Exception($ret);
         }
