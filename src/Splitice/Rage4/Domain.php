@@ -142,6 +142,9 @@ class Domain
     {
         $ret = $api->getDomain($id);
 
+        if($ret == 'Unable to fetch the item or API access not allowed' || $ret == 'not found'){
+        	return null;
+		}
         if (is_string($ret)) {
             throw new Rage4Exception($ret);
         }
