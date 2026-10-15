@@ -1,0 +1,9 @@
+parameters:
+    level: 5
+    # PHPStan 2 can model PHP 7.1 and newer. Use its oldest supported target
+    # for this compatibility-oriented package.
+    phpVersion: 70100
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+    tmpDir: /tmp/phpstan-rage4-objective

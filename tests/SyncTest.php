@@ -1,4 +1,5 @@
 <?php
+use PHPUnit\Framework\TestCase;
 use Splitice\Rage4\CreatedDomain;
 use Splitice\Rage4\CreatedRecord;
 use Splitice\Rage4\Domain;
@@ -6,7 +7,7 @@ use Splitice\Rage4\Record;
 
 include_once __DIR__.'/Mocks/MockedSync.php';
 
-class SyncTest extends PHPUnit_Framework_TestCase {
+class SyncTest extends TestCase {
     function testSimpleAddSync(){
         //Setup
         $name = "test.com";
@@ -178,4 +179,4 @@ class SyncTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('delete', $sync->actions[0][0]);
         $this->assertEquals('1.1.1.1', $sync->actions[0][1]->content);
     }
-} 
+}

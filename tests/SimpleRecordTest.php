@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Splitice\Rage4\Domain;
 use Splitice\Rage4\Rage4Api;
 
@@ -9,8 +11,19 @@ use Splitice\Rage4\Rage4Api;
  * Time: 2:24 PM
  */
 
-class SimpleDomainTest extends PHPUnit_Framework_TestCase {
+class SimpleDomainTest extends TestCase {
     const API_CLIENT = '\\Splitice\\Rage4\\IRage4ApiClient';
+
+    /**
+     * Create a mock using the legacy test suite's helper name.
+     *
+     * @param class-string $className
+     * @return MockObject
+     */
+    private function getMock($className)
+    {
+        return $this->createMock($className);
+    }
 
     function testCreateDomain(){
         //Setup
@@ -21,11 +34,11 @@ class SimpleDomainTest extends PHPUnit_Framework_TestCase {
 
         //Assert
         $client = $this->getMock(self::API_CLIENT);
-        $client->expects($this->once())->method('executeApi')->with($this->equalTo('createregulardomain'),$this->equalTo(array('name'=>$name,'email'=>$email,'ns1'=>'ns1.'.$ns,'ns2'=>'ns2.'.$ns)));
+        $client->expects($this->once())->method('executeApi')->with($this->equalTo('CreateRegularDomain'),$this->equalTo(array('name'=>$name,'email'=>$email,'ns1'=>'ns1.'.$ns,'ns2'=>'ns2.'.$ns)));
 
         //Do
         $api = new Rage4Api($client);
         $domain = new Domain($name, $type, $email, array(), $ns);
         $domain->create($api);
     }
-} 
+}

@@ -2,7 +2,15 @@
 namespace Splitice\Rage4;
 
 class GeoRegions {
+	/** @var array<string, int>|null */
 	private static $cache = null;
+
+	/**
+	 * @param Rage4Api $api
+	 * @param bool $cache
+	 * @return array<string, int>
+	 * @throws Rage4Exception
+	 */
 	static function RegionList(Rage4Api $api, $cache = true) {
 		if ($cache && self::$cache) {
 			return self::$cache;
@@ -10,7 +18,12 @@ class GeoRegions {
 		
 		$ret = array ();
 		
-		foreach ( $api->getGeoRegions () as $g ) {
+		$regions = $api->getGeoRegions();
+		if (!is_array($regions)) {
+			throw new Rage4Exception($regions);
+		}
+
+		foreach ( $regions as $g ) {
 			$ret [$g ['name']] = ( int ) $g ['value'];
 		}
 		
@@ -18,6 +31,9 @@ class GeoRegions {
 		
 		return $ret;
 	}
+	/**
+	 * @return array<int, array{ISO: string, Name: string, Region: string, Subregion: string}>
+	 */
 	static function GetCountryZones() {
 		return array (
 				0 => array (

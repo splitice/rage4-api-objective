@@ -1,6 +1,5 @@
 <?php
 namespace Splitice\Rage4;
-use Splitice\Rage4\Sync\SimpleSync;
 use Splitice\Rage4\Sync\IDomainSync;
 
 /**
@@ -23,7 +22,7 @@ class CreatedDomain extends Domain
      * @param int $type
      * @param string $email
      * @param int $id
-     * @param array $records
+     * @param array<int, Record> $records
      * @param int $subnet_mask
      * @param string|null $nsdomain
      */
@@ -38,18 +37,21 @@ class CreatedDomain extends Domain
      * Delete domain at Rage4.com
      *
      * @param Rage4Api $api
+     * @return void
      */
     function delete(Rage4Api $api)
     {
         $api->deleteDomain($this->id);
     }
 
+    /** @var array<int, CreatedRecord>|null */
     private $record_cache = null;
 
     /**
      * @param Rage4Api $api
      * @param bool $cache
-     * @return CreatedRecord[]
+     * @return array<int, CreatedRecord>
+     * @throws Rage4Exception
      */
     function get_records(Rage4Api $api, $cache = false)
     {
@@ -58,6 +60,9 @@ class CreatedDomain extends Domain
         }
         $records = array();
         $ret = $api->getRecords($this->id);
+        if (!is_array($ret)) {
+            throw new Rage4Exception($ret);
+        }
 
         foreach ($ret as $r) {
             $records[] = CreatedRecord::fromRage4($r);
@@ -67,6 +72,11 @@ class CreatedDomain extends Domain
         return $records;
     }
 
+    /**
+     * @param string $pattern
+     * @param string $value
+     * @return bool
+     */
     private static function _match($pattern, $value){
         if(empty($pattern)){
             return $value == $pattern;
@@ -74,7 +84,7 @@ class CreatedDomain extends Domain
 
         $last = strlen($pattern) - 1;
         if($last != 0 && $pattern[0] == '`'){
-            return preg_match($pattern, $value);
+            return (bool)preg_match($pattern, $value);
         }
 
         return $pattern == $value;
@@ -82,11 +92,11 @@ class CreatedDomain extends Domain
 
     /**
      * @param Rage4Api $api
-     * @param $name
-     * @param null $type will be interpreted as a regular expression if valid & start with "`"
+     * @param string $name
+     * @param string|null $type will be interpreted as a regular expression if valid & start with "`"
      * @param bool $array
      * @param bool $cache
-     * @return CreatedRecord|null|CreatedRecord[]
+     * @return CreatedRecord|array<int, CreatedRecord>|null
      */
     function get_record(Rage4Api $api, $name, $type = null, $array = false, $cache = false)
     {
@@ -119,6 +129,7 @@ class CreatedDomain extends Domain
      * Refresh the cached records
      *
      * @param Rage4Api $api
+     * @return void
      */
     function refresh_records(Rage4Api $api)
     {
@@ -130,13 +141,19 @@ class CreatedDomain extends Domain
      *
      * @param IDomainSync $sync
      * @param bool $doDelete
-     * @return null|CreatedDomain|void
+     * @return void
      */
     function sync(IDomainSync $sync, $doDelete = true)
     {
         $sync->sync_domain($this,$doDelete);
     }
 
+    /**
+     * @param Record $record
+     * @param Rage4Api $api
+     * @return CreatedRecord
+     * @throws Rage4Exception
+     */
     function add_record(Record $record, Rage4Api $api)
     {
         return $record->create($this, $api);

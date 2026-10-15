@@ -5,18 +5,42 @@ class Record
 {
     const DEFAULT_PRIORITY = 1;
 
+    /** @var string */
     public $name;
+    /** @var string */
     public $content;
+    /** @var string */
     public $type;
+    /** @var int */
     public $priority = self::DEFAULT_PRIORITY;
+    /** @var bool|null */
     public $failover = null;
+    /** @var string|null */
     public $failovercontent = null;
+    /** @var int */
     public $ttl = 3600;
+    /** @var int */
     public $geo = 0;
+    /** @var float|null */
     public $geolat = null;
+    /** @var float|null */
     public $geolong = null;
+    /** @var bool */
     public $geolock;
 
+    /**
+     * @param string $name
+     * @param mixed $content
+     * @param string $type
+     * @param int|null $priority
+     * @param bool|null $failover
+     * @param string|null $failovercontent
+     * @param int $ttl
+     * @param int $geo
+     * @param float|null $geolat
+     * @param float|null $geolong
+     * @param bool $geolock
+     */
     public function __construct($name, $content, $type, $priority = self::DEFAULT_PRIORITY, $failover = null, $failovercontent = null, $ttl = 3600, $geo = 0, $geolat = null, $geolong = null, $geolock = false)
     {
         $this->name = $name;
@@ -36,13 +60,16 @@ class Record
 
     /**
      * @param Rage4Api $api
-     * @param CreatedDomain $domain
+     * @param CreatedDomain|null $domain
      * @param bool $single
-     * @return CreatedRecord[]|Record
+     * @return array<int, CreatedRecord>|CreatedRecord
      * @throws \Exception
      */
-    function get(Rage4Api $api, CreatedDomain $domain, $single = false)
+    function get(Rage4Api $api, CreatedDomain $domain = null, $single = false)
     {
+        if ($domain === null) {
+            throw new \InvalidArgumentException('A domain is required to find a record.');
+        }
         $found = array();
         foreach ($domain->get_records($api, true) as $record) {
             if ($record->name == $this->name && $record->type == $this->type)
@@ -66,13 +93,13 @@ class Record
      */
     private function _created($id)
     {
-        return new CreatedRecord($id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, $this->geo, $this->geolat, $this->geolong);
+        return new CreatedRecord($id, $this->name, $this->content, $this->type, $this->priority, $this->failover, $this->failovercontent, $this->ttl, null, $this->geo, $this->geolat, $this->geolong);
     }
 
     /**
      * Make into a created record object given an ID manually.
      *
-     * @param $id
+     * @param int $id
      * @return CreatedRecord
      */
     function upgradeWithId($id){
@@ -102,7 +129,7 @@ class Record
     /**
      * Create a record instance from Rage4 record data returned.
      *
-     * @param $a Rage4 structured record data
+     * @param array<string, mixed> $a Rage4 structured record data
      * @return CreatedRecord
      */
     static function fromRage4($a)
@@ -117,7 +144,7 @@ class Record
      * @param Rage4Api $api
      * @param string $name
      * @param Domain $domain
-     * @param int|null $type
+     * @param string|null $type
      * @return null|CreatedRecord
      */
     static function fromName(Rage4Api $api, $name, Domain $domain, $type = null)
@@ -128,7 +155,7 @@ class Record
     /**
      * @param Rage4Api $api
      * @param CreatedDomain $domain
-     * @param $id
+     * @param int $id
      * @return CreatedRecord|null
      */
     static function fromId(Rage4Api $api, CreatedDomain $domain, $id)

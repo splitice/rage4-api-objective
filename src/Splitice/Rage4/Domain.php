@@ -31,7 +31,7 @@ class Domain
     public $type;
 
     /**
-     * @var Record[]|CreatedRecord[]
+     * @var array<int, Record>
      */
     public $records = array();
 
@@ -44,7 +44,7 @@ class Domain
      * @param string $name
      * @param int $type
      * @param string $email
-     * @param array $records
+     * @param array<int, Record> $records
      * @param string|null $nsdomain
      */
     function __construct($name, $type, $email, array $records = array(), $nsdomain = null)
@@ -69,14 +69,14 @@ class Domain
             return $ret;
         }
         $id = $ret['id'];
-        return new CreatedDomain($this->name, $this->type, $this->email, $id, array(), null, $this->nsdomain);
+        return new CreatedDomain($this->name, $this->type, $this->email, $id, array(), 0, $this->nsdomain);
     }
 
     /**
      * Get a created domain instance from Rage4
      *
      * @param Rage4Api $api
-     * @return null|CreatedDomain
+     * @return CreatedDomain|string|null
      */
     function get(Rage4Api $api)
     {
@@ -89,7 +89,7 @@ class Domain
      * Get all domains from Rage4
      *
      * @param Rage4Api $api
-     * @return CreatedDomain[]
+     * @return array<int, CreatedDomain>
      * @throws \Splitice\Rage4\Rage4Exception
      */
     static function getAll(Rage4Api $api)

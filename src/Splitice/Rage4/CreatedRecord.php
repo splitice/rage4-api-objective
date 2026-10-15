@@ -3,9 +3,25 @@ namespace Splitice\Rage4;
 
 class CreatedRecord extends Record
 {
+    /** @var int */
     public $id;
+    /** @var int|null */
     public $domain;
 
+    /**
+     * @param int $id
+     * @param string $name
+     * @param mixed $content
+     * @param string $type
+     * @param int|null $priority
+     * @param bool|null $failover
+     * @param string|null $failovercontent
+     * @param int $ttl
+     * @param int|null $domain
+     * @param int $geo
+     * @param float|null $geolat
+     * @param float|null $geolong
+     */
     public function __construct($id, $name, $content, $type, $priority = null, $failover = null, $failovercontent = null, $ttl = 3600, $domain = null, $geo = 0, $geolat = null, $geolong = null)
     {
         parent::__construct($name, $content, $type, $priority, $failover, $failovercontent, $ttl, $geo, $geolat, $geolong);
@@ -18,14 +34,19 @@ class CreatedRecord extends Record
      * TODO: remove / refactor
      *
      * @param Rage4Api $api
-     * @param CreatedDomain $domain
+     * @param CreatedDomain|null $domain
      * @param bool $single
-     * @return array|null|CreatedRecord|CreatedRecord[]|Record
+     * @return array<int, CreatedRecord>|CreatedRecord|null
      */
     function get(Rage4Api $api, CreatedDomain $domain = null, $single = false)
     {
-        if ($domain === null)
+        if ($domain === null && $this->domain !== null) {
             $domain = CreatedDomain::fromId($api, $this->domain);
+        }
+
+        if ($domain === null) {
+            return null;
+        }
 
         foreach ($domain->get_records($api, true) as $record) {
             if ($record->id == $this->id) {
@@ -44,7 +65,7 @@ class CreatedRecord extends Record
      *
      * @param Rage4Api $api
      * @param Record|null $record optionally, a record to template this record off.
-     * @return string|void
+     * @return array<string, mixed>|string
      */
     function update(Rage4Api $api, Record $record = null)
     {
@@ -66,6 +87,7 @@ class CreatedRecord extends Record
      * Delete record at Rage4.com
      *
      * @param Rage4Api $api
+     * @return void
      */
     function delete(Rage4Api $api)
     {

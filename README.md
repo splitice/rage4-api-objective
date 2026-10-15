@@ -1,7 +1,7 @@
 Rage4 DNS Objective Wrapping
 ============================
 
-[![Build Status](https://travis-ci.org/splitice/rage4-api-objective.svg?branch=master)](https://travis-ci.org/splitice/rage4-api-objective)
+[![CI](https://github.com/splitice/rage4-api-objective/actions/workflows/ci.yml/badge.svg)](https://github.com/splitice/rage4-api-objective/actions/workflows/ci.yml)
 
 This is a PHP5 wrapper to map Rage4 objects to domain objects and synchronize changes made.
 
